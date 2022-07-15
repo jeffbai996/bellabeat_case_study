@@ -47,10 +47,33 @@ We will rely on three key guiding questions for the direction of our analysis:
 Bellabeat's co-founder and Chief Creative Officer.
 
 **Sando Mur**  
-Mathematician and Bellabeat's cofounder; key member of the Bellabeat executive team
+Mathematician and Bellabeat's cofounder; key member of the Bellabeat executive team.
 
 **Bellabeat Marketing Analytics team**  
-A team of data analysts 
+A team of data analysts responsible for collecting, analyzing, and reporting data that informs Bellabeat's marketing strategy.
 
+### Scope of Work
+Our team will produce a report with the following deliverables:
 
-### Deliverables
+* A clear summary of the business task
+* A description of all data sources used
+* Documentation of any cleaning or manipulation of data
+* A summary of the analysis
+* Supporting visualizations and key findings
+* Top high-level content recommendations based on analysis
+
+TODO : Choose a product before writing business task summary
+# Deliverables
+
+### Business Task
+
+### Data Sources Used
+The dataset used in this analysis 
+
+### Data Cleaning
+
+### Analysis
+
+### Visualizations
+
+### Recommendations
