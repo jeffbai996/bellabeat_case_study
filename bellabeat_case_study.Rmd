@@ -1,0 +1,56 @@
+---
+title: "Bellabeat Case Study - How Can a Wellness Technology Company Play It Smart?"
+author: "Jeff Bai"
+date: '2022-07-14'
+output:
+  html_document:
+    toc: true
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+This case study is a capstone project for the Google Data Analytics Professional Certificate. The following analysis was completed for Course 8 - Case Study 2. For the purposes of this case study, I assume the role of a Junior Data Analyst working on the Marketing Analytics team at Bellabeat, a high-tech company that manufactures health-focused smart products for women.
+
+# Case Introduction
+### About Bellabeat
+Bellabeat was founded in 2013 by Urška Sršen and Sando Mur. Leveraging Sršen's background as an artist, Bellabeat has developed beautifully designed technology that informs and inspires women around the world. By collecting data on activity, sleep, stress, and reproductive health has allowed Bellabeat to empower women with knowledge about their own health and habits. 
+
+By 2016, Bellabeat achieved a worldwide presence and launched a variety of products. These products are available through online retailers and directly through Bellabeat's e-commerce channel. To engage their customer base, Bellabeat has invested in traditional advertising media (radio, billboards, print, TV), in addition to extensive digital marketing (Google Ads/Search, Facebook, Instagram, YouTube).
+
+The scope of our dataset used for this analysis contains 5 Bellabeat products:
+
+1. **Bellabeat** (app)  
+The Bellabeat app provides users with health data related to their activity, sleep, stress, menstrual cycle, and mindfulness habits. This data can help users better understand their current habits and make healthy decisions. The Bellabeat app connects to their line of smart wellness products.
+2. **Leaf**  
+Bellabeat’s classic wellness tracker can be worn as a bracelet, necklace, or clip. The Leaf tracker connects to the Bellabeat app to track activity, sleep, and stress.
+3. **Time**  
+This wellness watch combines the timeless look of a classic timepiece with smart technology to track user activity, sleep, and stress. The Time watch connects to the Bellabeat app to provide you with insights into your daily wellness.
+4. **Spring**  
+This is a water bottle that tracks daily water intake using smart technology to ensure that you are appropriately hydrated throughout the day. The Spring bottle connects to the Bellabeat app to track your hydration levels.
+5. **Bellabeat membership**  
+Bellabeat also offers a subscription-based membership program for users. Membership gives users 24/7 access to fully personalized guidance on nutrition, activity, sleep, health and beauty, and mindfulness based on their lifestyle and goals.
+
+### Scenario and Key Questions
+Chief Creative Officer Urška Sršen knows that an analysis of Bellabeat's available consumer data would reveal more opportunities for growth. She has tasked the Marketing Analytics team with focusing on one Bellabeat smart device product, analyzing its usage data in order to gain insight on how current customers are using their smart devices. With this information, Sršen hopes to receive high-level recommendations for how these trends can inform Bellabeat's marketing strategy moving forward.
+
+We will rely on three key guiding questions for the direction of our analysis:
+
+1. **What are some trends in smart device usage?**
+2. **How could these trends apply to Bellabeat customers?**
+3. **How could these trends help influence Bellabeat marketing strategy?**
+
+### Stakeholders
+**Urška Sršen**  
+Bellabeat's co-founder and Chief Creative Officer.
+
+**Sando Mur**  
+Mathematician and Bellabeat's cofounder; key member of the Bellabeat executive team
+
+**Bellabeat Marketing Analytics team**  
+A team of data analysts 
+
+
+### Deliverables
