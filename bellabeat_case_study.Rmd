@@ -67,8 +67,8 @@ TODO : Choose a product before writing business task summary
 
 ### Business Task
 
-### Data Sources Used
-The dataset used in this analysis 
+### Data Sources
+The dataset used in this analysis is "Fitbit Fitness Tracker Data", sourced from the personal fitness tracker data of 30 Fitbit users. It contains metrics such as physical activity output, heart rate, sleep patterns, and daily activity. This dataset was made available for this analysis through Mobius, a Kaggle contributor. The dataset is in the public domain, licensed under the terms of Creative Commons CC0 1.0 Universal.
 
 ### Data Cleaning
 
