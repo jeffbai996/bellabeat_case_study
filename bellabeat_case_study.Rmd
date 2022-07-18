@@ -44,13 +44,13 @@ We will rely on three key guiding questions for the direction of our analysis:
 
 ### Stakeholders
 **Urška Sršen**  
-Bellabeat's co-founder and Chief Creative Officer.
+Bellabeat's co-founder and Chief Creative Officer
 
 **Sando Mur**  
-Mathematician and Bellabeat's cofounder; key member of the Bellabeat executive team.
+Mathematician and Bellabeat's cofounder; key member of the Bellabeat executive team
 
 **Bellabeat Marketing Analytics team**  
-A team of data analysts responsible for collecting, analyzing, and reporting data that informs Bellabeat's marketing strategy.
+A team of data analysts responsible for collecting, analyzing, and reporting data that informs Bellabeat's marketing strategy
 
 ### Scope of Work
 Our team will produce a report with the following deliverables:
@@ -62,10 +62,10 @@ Our team will produce a report with the following deliverables:
 * Supporting visualizations and key findings
 * Top high-level content recommendations based on analysis
 
-TODO : Choose a product before writing business task summary
 # Deliverables
 
 ### Business Task
+With smart devices a key pillar of Bellabeat's business, our team aims to dive deep into usage data, drawing insights and conclusions from how smart devices are used in general, in order to inform Bellabeat's future marketing strategy and drive future growth.
 
 ### Data Sources
 The dataset used in this analysis is "Fitbit Fitness Tracker Data", sourced from the personal fitness tracker data of 30 Fitbit users. It contains metrics such as physical activity output, heart rate, sleep patterns, and daily activity. This dataset was made available for this analysis through Mobius, a Kaggle contributor. The dataset is in the public domain, licensed under the terms of Creative Commons CC0 1.0 Universal.
