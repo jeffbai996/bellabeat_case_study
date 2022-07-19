@@ -16,13 +16,13 @@ This case study is a capstone project for the Google Data Analytics Professional
 
 # Case Introduction
 ### About Bellabeat
-Bellabeat was founded in 2013 by Urška Sršen and Sando Mur. Leveraging Sršen's background as an artist, Bellabeat has developed beautifully designed technology that informs and inspires women around the world. By collecting data on activity, sleep, stress, and reproductive health has allowed Bellabeat to empower women with knowledge about their own health and habits. 
+Bellabeat was founded in 2013 by Urška Sršen and Sando Mur. Leveraging Sršen's background as an artist, Bellabeat has developed beautifully designed technology that informs and inspires women around the world. By collecting data on activity, sleep, stress, and reproductive health, Bellabeat empowers women with actionable insights into their health and habits. 
 
-By 2016, Bellabeat achieved a worldwide presence and launched a variety of products. These products are available through online retailers and directly through Bellabeat's e-commerce channel. To engage their customer base, Bellabeat has invested in traditional advertising media (radio, billboards, print, TV), in addition to extensive digital marketing (Google Ads/Search, Facebook, Instagram, YouTube).
+By 2016, Bellabeat achieved a worldwide presence and launched a variety of products. These products are available through online retailers or through Bellabeat's e-commerce channel. To engage their customer base, Bellabeat has invested in traditional advertising media (radio, billboards, print, TV), in addition to extensive digital marketing (Google Ads/Search, Facebook, Instagram, YouTube).
 
 Bellabeat has 5 main products:
 
-1. **Bellabeat** (app)  
+1. **Bellabeat app**  
 The Bellabeat app provides users with health data related to their activity, sleep, stress, menstrual cycle, and mindfulness habits. This data can help users better understand their current habits and make healthy decisions. The Bellabeat app connects to their line of smart wellness products.
 2. **Leaf**  
 Bellabeat’s classic wellness tracker can be worn as a bracelet, necklace, or clip. The Leaf tracker connects to the Bellabeat app to track activity, sleep, and stress.
@@ -34,9 +34,9 @@ This is a water bottle that tracks daily water intake using smart technology to 
 Bellabeat also offers a subscription-based membership program for users. Membership gives users 24/7 access to fully personalized guidance on nutrition, activity, sleep, health and beauty, and mindfulness based on their lifestyle and goals.
 
 ### Scenario and Key Questions
-Chief Creative Officer Urška Sršen knows that an analysis of Bellabeat's available consumer data would reveal more opportunities for growth. She has tasked the Marketing Analytics team with focusing on one Bellabeat smart device product, analyzing its usage data in order to gain insight on how current customers are using their smart devices. With this information, Sršen hopes to receive high-level recommendations for how these trends can inform Bellabeat's marketing strategy moving forward.
+Chief Creative Officer Urška Sršen knows that an analysis of Bellabeat's available consumer data would reveal more opportunities for growth. She has tasked the Marketing Analytics team with analyzing usage data from a public dataset in order to gain insight on how people are using smart fitness trackers. With this information, Sršen hopes to receive high-level recommendations for how these trends can inform Bellabeat's marketing strategy for their product moving forward.
 
-We will rely on three key guiding questions for the direction of our analysis:
+Our team will rely on three key guiding questions for the direction of our analysis:
 
 1. **What are some trends in smart device usage?**
 2. **How could these trends apply to Bellabeat customers?**
@@ -57,24 +57,6 @@ Our team will produce a report with the following deliverables:
 
 * A clear summary of the business task
 * A description of all data sources used
-SELECT COUNT(DISTINCT Id) AS distinct_ids
-FROM `marine-actor-233222.bellabeat_data.dailyActivity`
-
-SELECT COUNT(DISTINCT Id) AS distinct_ids
-FROM `marine-actor-233222.bellabeat_data.dailyCalories`
-
-SELECT COUNT(DISTINCT Id) AS distinct_ids
-FROM `marine-actor-233222.bellabeat_data.dailyIntensities`
-
-SELECT COUNT(DISTINCT Id) AS distinct_ids
-FROM `marine-actor-233222.bellabeat_data.dailySteps`
-
-SELECT COUNT(DISTINCT Id) AS distinct_ids
-FROM `marine-actor-233222.bellabeat_data.sleepDay`
-
-SELECT COUNT(DISTINCT Id) AS distinct_ids
-FROM `marine-actor-233222.bellabeat_data.weightLogInfo`
-Our query results showed that dailyActivity, dailyCalories, dailyIntensities, and dailySteps each ha
 * Documentation of any cleaning or manipulation of data
 * A summary of the analysis
 * Supporting visualizations and key findings
@@ -106,7 +88,7 @@ The dataset includes activity rate, calories burned, exercise intensity, steps t
 This dataset date range is from April to May 2016, and is **not current**. At the same time, fitness tracker users' activity patterns are not likely to have changed in the years since the data was collected, and is therefore unlikely to skew our results.
 
 **Cited?**  
-This dataset's source, authors, and collection method are well documented and can be found on the dataset's web page.
+This dataset's source, authors, and collection method are well documented and can be found on the dataset's [web page](https://www.kaggle.com/datasets/arashnic/fitbit).
 
 ## Data Cleaning
 Since our stakeholders desire a high-level analysis of usage trends instead of minute-by-minute activity by individual, we will not include hourly, by-minute, and by-second data for heartrate, intensity, steps, and sleep in our analysis. This leaves us with 6 .csv files:
@@ -118,26 +100,24 @@ Since our stakeholders desire a high-level analysis of usage trends instead of m
 * sleepDay_merged.csv
 * weightLogInfo_merged.csv
 
-We'll truncate the titles of our .csv files, removing "_merged" as it is redundant and needlessly makes our data more difficult to manipulate.
+Exploring the data within Google Sheets, we found that columns from dailyCalories_merged, dailyIntensities_merged, and dailySteps_merged are joined within dailyActivity_merged. We can therefore remove these 3 .csv files without losing any data.
 
-### BigQuery
-Before digging deeper with R, we first want to learn more about the attributes of our included datasets with Google's BigQuery.
+We'll also truncate the titles of our remaining 3 .csv files, removing "_merged" as it is redundant and needlessly makes our data more difficult to manipulate. This leaves us with:
+
+* dailyActivity.csv
+* sleepDay.csv
+* weightLogInfo.csv
+
+### Cleaning with BigQuery
+Before digging deeper with R, we first want to learn more about the attributes of our selected datasets with Google's BigQuery.
 
 ***Note**: sleepDay.csv and weightLogInfo.csv were not able to be uploaded to BigQuery in their raw form as the timestamp column could not be parsed, either with auto or manual schemas. Since the data here were collected on a daily basis, we removed the time and reformatted these columns into a MM/DD/YYYY format with Google Sheets before uploading to BigQuery.*
 
+**Distinct IDs**  
 Let's take a look at how many distinct IDs (users) are represented in our data:
 ```{code}
 SELECT COUNT(DISTINCT Id) AS distinct_ids
 FROM `marine-actor-233222.bellabeat_data.dailyActivity`
-
-SELECT COUNT(DISTINCT Id) AS distinct_ids
-FROM `marine-actor-233222.bellabeat_data.dailyCalories`
-
-SELECT COUNT(DISTINCT Id) AS distinct_ids
-FROM `marine-actor-233222.bellabeat_data.dailyIntensities`
-
-SELECT COUNT(DISTINCT Id) AS distinct_ids
-FROM `marine-actor-233222.bellabeat_data.dailySteps`
 
 SELECT COUNT(DISTINCT Id) AS distinct_ids
 FROM `marine-actor-233222.bellabeat_data.sleepDay`
@@ -146,18 +126,48 @@ SELECT COUNT(DISTINCT Id) AS distinct_ids
 FROM `marine-actor-233222.bellabeat_data.weightLogInfo`
 ```
 
-Our query results showed that dailyActivity, dailyCalories, dailyIntensities, and dailySteps each had **33 unique IDs**. 
+Our query results showed that dailyActivity contains **33 unique IDs**. 
 
 sleepDay contains **24** unique IDs.
 
 weightLogInfo contains **8** unique IDs.
 
-sleepDay and weightLogInfo both contain a smaller sample size (n < 30) than is required for the central limit theorem to hold. However, these two pieces of data contain unique metrics (sleep, weight) not represented in the rest of the dataset. As such, we will retain these two tables while keeping in mind their limited statistical power.
+sleepDay and weightLogInfo both contain a smaller sample size (n < 30) than is required for the central limit theorem to hold. However, these two pieces of data contain unique metrics (sleep, weight) not represented in the rest of the data. As such, we will retain these two tables for further analysis while keeping in mind their limited statistical power.
 
-### R
+**Invalid Records**  
+We also want to see how many invalid records exist in our data.
 
-We first load the tidyverse and other required libraries:
-```{r, eval=FALSE}
+To filter for invalid records in dailyActivity, we select all records where TotalSteps equals 0.
+```{code}
+SELECT *
+FROM `marine-actor-233222.bellabeat_data.dailyActivity` 
+WHERE TotalSteps = 0
+```
+
+Our query returned 77 rows where TotalSteps equals 0. As expected, these rows also have zero values for TotalDistance, TrackerDistance, LoggedActivitiesDistance, and so on. We will assume these records are a result of the user not tracking their activity for those days. We will drop these rows from our dataset with R later on.
+
+We'll also filter sleepDay and see if there are any records where TotalMinutesAsleep equals 0.
+```{code}
+SELECT *
+FROM `marine-actor-233222.bellabeat_data.sleepDay` 
+WHERE TotalMinutesAsleep = 0
+```
+
+This query returned no results - we do not have any invalid records in sleepDay.
+
+We then repeat this process for weightLogInfo, using the column WeightKg as our filter:
+```{code}
+SELECT *
+FROM `marine-actor-233222.bellabeat_data.weightLogInfo` 
+WHERE WeightKg = 0
+```
+
+This query again returned no results.
+
+### Cleaning with R
+
+We first load the tidyverse and other required packages:
+```{r eval=FALSE, message=FALSE}
 library(tidyverse)
 library(lubridate)
 library(janitor)
@@ -165,15 +175,54 @@ library(here)
 ```
 
 We'll then load the .csv files we chose earlier into data frames:
-```{r, eval=FALSE}
+```{r eval=FALSE, message=FALSE}
 dailyActivity <- read_csv("datasets/dailyActivity.csv")
-dailyCalories <- read_csv("datasets/dailyCalories.csv")
-dailyIntensities <- read_csv("datasets/dailyIntensities.csv")
-dailySteps <- read_csv("datasets/dailySteps.csv")
 sleepDay <- read_csv("datasets/sleepDay.csv")
 weightLogInfo <- read_csv("datasets/weightLogInfo.csv")
 ```
 
+We'll then use the janitor package to change our column names to snake_case from UpperCamelCase for consistency:
+```{r eval=FALSE, message=FALSE} 
+dailyActivity <- clean_names(dailyActivity)
+sleepDay <- clean_names(sleepDay)
+weightLogInfo <- clean_names (weightLogInfo)
+```
+
+Also using the janitor package, let's see if there are any duplicate values in any of our 3 data frames:
+```{r eval=FALSE, message=FALSE}
+get_dupes(dailyActivity)
+
+No variable names specified - using all columns.
+
+No duplicate combinations found of: id, activity_date, total_steps, total_distance, tracker_distance, logged_activities_distance, very_active_distance, moderately_active_distance, light_active_distance, ... and 6 other variables
+
+get_dupes(sleepDay)
+
+No variable names specified - using all columns.
+# A tibble: 6 × 6
+          id sleep_day total_sleep_records total_minutes_asleep total_time_in_bed dupe_count
+       <dbl> <chr>                   <dbl>                <dbl>             <dbl>      <int>
+1 4388161847 5/5/2016                    1                  471               495          2
+2 4388161847 5/5/2016                    1                  471               495          2
+3 4702921684 5/7/2016                    1                  520               543          2
+4 4702921684 5/7/2016                    1                  520               543          2
+5 8378563200 4/25/2016                   1                  388               402          2
+6 8378563200 4/25/2016                   1                  388               402          2
+
+get_dupes(weightLogInfo)
+
+No variable names specified - using all columns.
+
+No duplicate combinations found of: id, date, weight_kg, weight_pounds, fat, bmi, is_manual_report, log_id
+```
+
+It appears we have 6 duplicate records, all in the sleepDay data frame. We'll remove these, along with the records with 0 total steps as mentioned previously. For this, we will be using the dplyr package, which has already been loaded as part of the tidyverse:
+
+```{r, eval=FALSE, message=FALSE}
+sleepDay <- distinct(sleepDay)
+```
+
+This operation removed 3 duplicated records from our data frame - as expected.
 
 ## Analysis
 
