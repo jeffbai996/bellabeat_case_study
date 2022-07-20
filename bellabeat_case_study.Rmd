@@ -342,45 +342,57 @@ Group variables            None
 3 total_time_in_bed            0             1 459.   127.    61 403 463 526  961
 ```
 
-....add comments and code chunks here....
+This data frame does not appear to have any missing values or statistical oddities warranting action. We'll keep it as it is and move on to the next.
 
-And finally, we will skim weightLogInfo:
+Finally, we will skim weightLogInfo, removing log_id as well:
 
 ```{r, eval=FALSE, message=FALSE}
-skim_without_charts(weightLogInfo, !id)
+weightLogInfo %>% 
+  select(-c(id, log_id)) %>% 
+  skim_without_charts()
 ```
 
 ```
 ── Data Summary ────────────────────────
-                           Values       
-Name                       weightLogInfo
-Number of rows             67           
-Number of columns          8            
-_______________________                 
-Column type frequency:                  
-  character                1            
-  logical                  1            
-  numeric                  5            
-________________________                
-Group variables            None         
+                           Values    
+Name                       Piped data
+Number of rows             67        
+Number of columns          6         
+_______________________              
+Column type frequency:               
+  character                1         
+  logical                  1         
+  numeric                  4         
+________________________             
+Group variables            None      
 
-── Variable type: character ────────────────────────────────────────────────────────────────────────
+── Variable type: character ─────────────────────────────────────────────────────
   skim_variable n_missing complete_rate min max empty n_unique whitespace
 1 date                  0             1   8   9     0       31          0
 
-── Variable type: logical ──────────────────────────────────────────────────────────────────────────
+── Variable type: logical ───────────────────────────────────────────────────────
   skim_variable    n_missing complete_rate  mean count           
 1 is_manual_report         0             1 0.612 TRU: 41, FAL: 26
 
-── Variable type: numeric ──────────────────────────────────────────────────────────────────────────
-  skim_variable n_missing complete_rate    mean           sd      p0     p25     p50     p75    p100
-1 weight_kg             0        1      7.20e 1        13.9  5.26e 1 6.14e 1 6.25e 1 8.50e 1 1.34e 2
-2 weight_pounds         0        1      1.59e 2        30.7  1.16e 2 1.35e 2 1.38e 2 1.88e 2 2.94e 2
-3 fat                  65        0.0299 2.35e 1         2.12 2.2 e 1 2.28e 1 2.35e 1 2.42e 1 2.5 e 1
-4 bmi                   0        1      2.52e 1         3.07 2.15e 1 2.40e 1 2.44e 1 2.56e 1 4.75e 1
-5 log_id                0        1      1.46e12 782994784.   1.46e12 1.46e12 1.46e12 1.46e12 1.46e12
+── Variable type: numeric ───────────────────────────────────────────────────────
+  skim_variable n_missing complete_rate  mean    sd    p0   p25   p50   p75  p100
+1 weight_kg             0        1       72.0 13.9   52.6  61.4  62.5  85.0 134. 
+2 weight_pounds         0        1      159.  30.7  116.  135.  138.  188.  294. 
+3 fat                  65        0.0299  23.5  2.12  22    22.8  23.5  24.2  25  
+4 bmi                   0        1       25.2  3.07  21.5  24.0  24.4  25.6  47.5
 ```
-....add comments and code chunks here....
+We can see that the 'fat' column has a completeness of only 3%, with 65 missing values. We'll remove this column as it is of little value to our later analysis.
+
+We also have a 'log_id' column (filtered out of the data summary) which is not seen in our other data frames. Since it is not numerical data and cannot be used to perform joins, we'll also remove this column.
+
+```{r, eval=FALSE, message=FALSE}
+weightLogInfo <- select(
+    weightLogInfo, 
+    -c(fat, log_id)
+  )
+```
+
+With our data cleaned, we can move on to the analysis phase of this study.
 
 ## Analysis
 
