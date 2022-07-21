@@ -25,6 +25,7 @@ pre code {
 This case study is a capstone project for the Google Data Analytics Professional Certificate. The following analysis was completed for Course 8 - Case Study 2. For the purposes of this case study, I assume the role of a Junior Data Analyst working on the Marketing Analytics team at Bellabeat, a high-tech company that manufactures health-focused smart products for women.
 
 # Case Introduction
+
 ### About Bellabeat
 Bellabeat was founded in 2013 by Urška Sršen and Sando Mur. Leveraging Sršen's background as an artist, Bellabeat has developed beautifully designed technology that informs and inspires women around the world. By collecting data on activity, sleep, stress, and reproductive health, Bellabeat empowers women with actionable insights into their health and habits. 
 
@@ -53,6 +54,7 @@ Our team will rely on three key guiding questions for the direction of our analy
 3. **How could these trends help influence Bellabeat marketing strategy?**
 
 ### Stakeholders
+
 **Urška Sršen**  
 Bellabeat's co-founder and Chief Creative Officer
 
@@ -126,7 +128,7 @@ Before digging deeper with R, we first want to learn more about the attributes o
 **Distinct IDs**  
 Let's take a look at how many distinct IDs (users) are represented in our data:
 
-```{code}
+```{}
 SELECT COUNT(DISTINCT Id) AS distinct_ids
 FROM `marine-actor-233222.bellabeat_data.dailyActivity`
 
@@ -150,7 +152,7 @@ We also want to see how many invalid records exist in our data.
 
 To filter for invalid records in dailyActivity, we select all records where TotalSteps equals 0:
 
-```{code}
+```{}
 SELECT *
 FROM `marine-actor-233222.bellabeat_data.dailyActivity` 
 WHERE TotalSteps = 0
@@ -160,7 +162,7 @@ Our query returned 77 rows where TotalSteps equals 0. As expected, these rows al
 
 We'll also filter sleepDay and see if there are any records where TotalMinutesAsleep equals 0:
 
-```{code}
+```{}
 SELECT *
 FROM `marine-actor-233222.bellabeat_data.sleepDay` 
 WHERE TotalMinutesAsleep = 0
@@ -170,7 +172,7 @@ This query returned no results - we do not have any invalid records in sleepDay.
 
 We then repeat this process for weightLogInfo, using the column WeightKg as our filter:
 
-```{code}
+```{}
 SELECT *
 FROM `marine-actor-233222.bellabeat_data.weightLogInfo` 
 WHERE WeightKg = 0
@@ -183,16 +185,17 @@ This query again returned no results.
 **Loading required packages**  
 We first load the tidyverse and other required packages:
 
-```{r eval=FALSE, message=FALSE}
+```{r eval=FALSE}
 library(tidyverse)
 library(janitor)
 library(skimr)
+library(lubridate)
 ```
 
 **Loading .csv files into data frames**  
 We'll then load the .csv files we chose earlier into data frames:
 
-```{r eval=FALSE, message=FALSE}
+```{r eval=FALSE}
 dailyActivity <- read_csv("datasets/dailyActivity.csv")
 sleepDay <- read_csv("datasets/sleepDay.csv")
 weightLogInfo <- read_csv("datasets/weightLogInfo.csv")
@@ -201,7 +204,7 @@ weightLogInfo <- read_csv("datasets/weightLogInfo.csv")
 **Converting column names**  
 We'll then use the janitor package to change our column names to snake_case from UpperCamelCase to improve readability:
 
-```{r eval=FALSE, message=FALSE} 
+```{r eval=FALSE} 
 dailyActivity <- clean_names(dailyActivity)
 sleepDay <- clean_names(sleepDay)
 weightLogInfo <- clean_names (weightLogInfo)
@@ -242,7 +245,7 @@ It appears we have 6 duplicate records, all in the sleepDay data frame.
 **Removing duplicate and invalid records**  
 We want to remove our previously-identified duplicate records, along with the records with 0 total steps as mentioned previously. For this, we will be using the dplyr package, which has already been loaded as part of the tidyverse:
 
-```{r, eval=FALSE, message=FALSE}
+```{r, eval=FALSE}
 sleepDay <- distinct(sleepDay)
 ```
 
@@ -250,7 +253,7 @@ This operation removed 3 duplicated records from our data frame, as expected.
 
 We'll proceed to removing the 77 records from dailyActivity with total_steps = 0, also using dplyr:
 
-```{r, eval=FALSE, message=FALSE}
+```{r, eval=FALSE}
 dailyActivity <- dailyActivity %>% 
   filter(total_steps > 0)
 ```
@@ -260,7 +263,7 @@ This operation leaves the dailyActivity data frame with 863 rows, as expected.
 **Identifying and removing outliers**  
 Having removed our unwanted rows, we are now able to run some statistical summaries on our data frames without skewing the results due to zero values and duplicates. For this, we'll use the skimr package we loaded earlier. We call skim_without_charts() first on dailyActivity, with the exception of the id column as it is not numerical data:
 
-```{r eval=FALSE, message=FALSE}
+```{r eval=FALSE}
 skim_without_charts(dailyActivity, !id)
 ```
 
@@ -305,7 +308,7 @@ The attribute that stands out most is the left-skewness of some variables, namel
 
 This implies that these columns contain mostly zero or near-zero values. For logged_activities_distance, it is likely that most users did not log "activities" while wearing their fitness trackers. For sedentary_active_distance, it appears that very little distance was logged while users were sedentary - a logical conclusion. As such, these two columns have little value for later analysis, and we will remove them from our data frame accordingly.
 
-```{r, eval=FALSE, message=FALSE}
+```{r, eval=FALSE}
 dailyActivity <- select(
     dailyActivity, 
     -c(logged_activities_distance, sedentary_active_distance)
@@ -314,11 +317,11 @@ dailyActivity <- select(
 
 Moving on, we'll call skim_without_charts() on sleepDay:
 
-```{r, eval=FALSE, message=FALSE}
+```{r, eval=FALSE}
 skim_without_charts(sleepDay, !id)
 ```
 
-```
+```{}
 ── Data Summary ────────────────────────
                            Values  
 Name                       sleepDay
@@ -342,17 +345,17 @@ Group variables            None
 3 total_time_in_bed            0             1 459.   127.    61 403 463 526  961
 ```
 
-This data frame does not appear to have any missing values or statistical oddities warranting action. We'll keep it as it is and move on to the next.
+This data frame does not appear to have any missing values or statistical oddities warranting removal. However, looking at the data frame directly reveals that many users did not log their sleep every day, with some logging as few as 1 in the span of 29 days. This suggests to us that the sleep tracking function must be manually activated by the user each night.
 
 Finally, we will skim weightLogInfo, removing log_id as well:
 
-```{r, eval=FALSE, message=FALSE}
+```{r, eval=FALSE}
 weightLogInfo %>% 
   select(-c(id, log_id)) %>% 
   skim_without_charts()
 ```
 
-```
+```{}
 ── Data Summary ────────────────────────
                            Values    
 Name                       Piped data
@@ -383,9 +386,11 @@ Group variables            None
 ```
 We can see that the 'fat' column has a completeness of only 3%, with 65 missing values. We'll remove this column as it is of little value to our later analysis.
 
-We also have a 'log_id' column (filtered out of the data summary) which is not seen in our other data frames. Since it is not numerical data and cannot be used to perform joins, we'll also remove this column.
+Similarly to the sleepDay data frame, many users did not log their weight every day. Indeed, there is a true/false column named 'is_manual_report', suggesting that users must manually report unless they also use a Fitbit smart scale to measure their weight.
 
-```{r, eval=FALSE, message=FALSE}
+We also have a 'log_id' column (filtered out of the data summary) which is not seen in our other data frames. Since it is not numerical data and also cannot be used to perform joins, we'll remove this column.
+
+```{r, eval=FALSE}
 weightLogInfo <- select(
     weightLogInfo, 
     -c(fat, log_id)
@@ -394,8 +399,46 @@ weightLogInfo <- select(
 
 With our data cleaned, we can move on to the analysis phase of this study.
 
-## Analysis
+## Analysis and Visualizations
 
-## Visualizations
+### Key Question 1
+#### What are some trends in smart device usage?
+**Trend 1: Low usage of manual reporting functions**  
+On a general level, we've already found some insights from our earlier data exploration, namely:
+
+* Fitness tracker users mostly do not log fitness activities manually and generally rely on the automatic collection of health data instead
+* The weight and sleep logs rely on manual reporting and is underused, with many missing values and dates
+
+We can visualize this quickly with Tableau by plotting data points for each user ID over our time frame:
+
+**For sleepDay**  
+![](./images/sleepDay_tracker_use.png)
+
+**For weightLogInfo**  
+![](./images/weightLog_tracker_use.png)
+As we can see, only 3 users successfully tracked their sleep every day, and 0 users tracked their weight every day over our 29-day time frame. This suggests that users do not favor manual reporting.
+
+**Trend 2: **  
+Currently, our activity_date column's data type is 'character'. We'll first change this to a date using lubridate:
+
+```{r, eval=FALSE}
+dailyActivity$activity_date <- as_date(dailyActivity$activity_date, format = "%m/%d/%Y")
+```
+
+We then add a new column specifying day-of-week within dailyActivity:
+```{r, eval=FALSE}
+dailyActivity <- dailyActivity %>% 
+  mutate(weekday = wday(activity_date, label = TRUE))
+```
+
+
+
+### Key Question 2
+#### How could these trends apply to Bellabeat customers?
+
+
+### Key Question 3
+#### How could these trends help influence Bellabeat marketing strategy?
+Since our third key question calls for recommendations on action, we will address it in our final section below.
 
 ## Recommendations
