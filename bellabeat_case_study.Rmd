@@ -150,15 +150,17 @@ sleepDay and weightLogInfo both contain a smaller sample size (n < 30) than is r
 **Invalid Records**  
 We also want to see how many invalid records exist in our data.
 
-To filter for invalid records in dailyActivity, we select all records where TotalSteps equals 0:
+From inspecting the data table preview on BigQuery, we found that there were many records with a very low number of steps. As the average person takes around 5,000 steps per day, we'll count records with less than 500 steps per day as invalid.
+
+We select all records where TotalSteps is less than 500:
 
 ```{}
 SELECT *
 FROM `marine-actor-233222.bellabeat_data.dailyActivity` 
-WHERE TotalSteps = 0
+WHERE TotalSteps < 500
 ```
 
-Our query returned 77 rows where TotalSteps equals 0. As expected, these rows also have zero values for TotalDistance, TrackerDistance, LoggedActivitiesDistance, and so on. We will assume these records are a result of the user not tracking their activity for those days. We will drop these rows from our dataset with R later on.
+Our query returned 98 rows where TotalSteps is less than 500. As expected, these rows also have low values for TotalDistance, TrackerDistance, LoggedActivitiesDistance, and so on. We will assume these records are a result of the user not tracking their activity for those days. We will drop these rows from our dataset with R later on.
 
 We'll also filter sleepDay and see if there are any records where TotalMinutesAsleep equals 0:
 
@@ -251,14 +253,14 @@ sleepDay <- distinct(sleepDay)
 
 This operation removed 3 duplicated records from our data frame, as expected.
 
-We'll proceed to removing the 77 records from dailyActivity with total_steps = 0, also using dplyr:
+We'll proceed to removing the 98 records from dailyActivity with total_steps < 500, also using dplyr:
 
 ```{r, eval=FALSE}
 dailyActivity <- dailyActivity %>% 
-  filter(total_steps > 0)
+  filter(total_steps >= 500)
 ```
 
-This operation leaves the dailyActivity data frame with 863 rows, as expected.
+This operation leaves the dailyActivity data frame with 842 rows, as expected.
 
 **Identifying and removing outliers**  
 Having removed our unwanted rows, we are now able to run some statistical summaries on our data frames without skewing the results due to zero values and duplicates. For this, we'll use the skimr package we loaded earlier. We call skim_without_charts() first on dailyActivity, with the exception of the id column as it is not numerical data:
@@ -271,34 +273,37 @@ skim_without_charts(dailyActivity, !id)
 ── Data Summary ────────────────────────
                            Values       
 Name                       dailyActivity
-Number of rows             863          
-Number of columns          15           
+Number of rows             842          
+Number of columns          14           
 _______________________                 
 Column type frequency:                  
-  character                1            
-  numeric                  13           
+  Date                     1            
+  factor                   1            
+  numeric                  11           
 ________________________                
 Group variables            None         
 
-── Variable type: character ─────────────────────────────────────────────────────────────────────────────────────────
-  skim_variable n_missing complete_rate min max empty n_unique whitespace
-1 activity_date         0             1   8   9     0       31          0
+── Variable type: Date ────────────────────────────────────────────────────────────────────────────────────────────
+  skim_variable n_missing complete_rate min        max        median     n_unique
+1 activity_date         0             1 2016-04-12 2016-05-12 2016-04-26       31
 
-── Variable type: numeric ───────────────────────────────────────────────────────────────────────────────────────────
-   skim_variable              n_missing complete_rate       mean         sd p0     p25      p50       p75      p100
- 1 total_steps                        0             1 8319.      4745.       4 4923    8053     11092.    36019    
- 2 total_distance                     0             1    5.98       3.72     0    3.37    5.59      7.90     28.0  
- 3 tracker_distance                   0             1    5.96       3.70     0    3.37    5.59      7.88     28.0  
- 4 logged_activities_distance         0             1    0.118      0.646    0    0       0         0         4.94 
- 5 very_active_distance               0             1    1.64       2.74     0    0       0.410     2.27     21.9  
- 6 moderately_active_distance         0             1    0.618      0.905    0    0       0.310     0.865     6.48 
- 7 light_active_distance              0             1    3.64       1.86     0    2.34    3.58      4.89     10.7  
- 8 sedentary_active_distance          0             1    0.00175    0.00765  0    0       0         0         0.110
- 9 very_active_minutes                0             1   23.0       33.6      0    0       7        35       210    
-10 fairly_active_minutes              0             1   14.8       20.4      0    0       8        21       143    
-11 lightly_active_minutes             0             1  210.        96.8      0  146.    208       272       518    
-12 sedentary_minutes                  0             1  956.       280.       0  722.   1021      1189      1440    
-13 calories                           0             1 2361.       703.      52 1856.   2220      2832      4900    
+── Variable type: factor ──────────────────────────────────────────────────────────────────────────────────────────
+  skim_variable n_missing complete_rate ordered n_unique top_counts                            
+1 weekday               0             1 TRUE           7 Wed: 136, Tue: 135, Thu: 130, Fri: 117
+
+── Variable type: numeric ─────────────────────────────────────────────────────────────────────────────────────────
+   skim_variable              n_missing complete_rate     mean       sd      p0     p25      p50       p75     p100
+ 1 total_steps                        0             1 8523.    4622.    590     5093    8198.    11168.    36019   
+ 2 total_distance                     0             1    6.13     3.65    0.420    3.51    5.71      8.02     28.0 
+ 3 tracker_distance                   0             1    6.11     3.63    0.420    3.51    5.71      8.00     28.0 
+ 4 very_active_distance               0             1    1.68     2.76    0        0       0.470     2.32     21.9 
+ 5 moderately_active_distance         0             1    0.633    0.911   0        0       0.325     0.880     6.48
+ 6 light_active_distance              0             1    3.73     1.79    0        2.41    3.66      4.92     10.7 
+ 7 very_active_minutes                0             1   23.6     33.9     0        0       8        36       210   
+ 8 fairly_active_minutes              0             1   15.1     20.6     0        0       8        21       143   
+ 9 lightly_active_minutes             0             1  215.      92.6     0      151     212.      274.      518   
+10 sedentary_minutes                  0             1  949.     272.     13      720    1018.     1182      1440   
+11 calories                           0             1 2380.     697.     52     1876.   2234.     2846      4900     
 ```
 
 The attribute that stands out most is the left-skewness of some variables, namely:
@@ -418,7 +423,7 @@ We can visualize this quickly with Tableau by plotting data points for each user
 ![](./images/weightLog_tracker_use.png)
 As we can see, only 3 users successfully tracked their sleep every day, and 0 users tracked their weight every day over our 29-day time frame. This suggests that users do not favor manual reporting.
 
-**Trend 2: **  
+**Trend 2: Users exercise more at the start of a week and on weekends**  
 Currently, our activity_date column's data type is 'character'. We'll first change this to a date using lubridate:
 
 ```{r, eval=FALSE}
@@ -431,7 +436,25 @@ dailyActivity <- dailyActivity %>%
   mutate(weekday = wday(activity_date, label = TRUE))
 ```
 
+We then plot with ggplot:
+```{r, eval=FALSE}
+dailyActivity %>% 
+  group_by(weekday) %>% 
+  ggplot(aes(x = weekday, y = total_steps)) +
+  geom_boxplot() +
+  labs(
+    title = "Total Steps Taken by Day of Week",
+    x = "Day of Week",
+    y = "Total Steps Taken",
+    caption = "Time frame: April 12, 2016 to May 11, 2016"
+  )
+```
+![](./images/total_steps_taken_day_of_week.png)
+Here, we can see a higher median value and interquartile range (IQR) for Mondays and Tuesdays compared to other weekday days. The day with the highest IQR is Saturday.
 
+We also observe the highest maximum whisker (Q3 + 1.5 * IQR) on Saturday, and the largest outlier on Sunday. 
+
+This suggests to us that, on average, the Fitbit users in this dataset exercised the most on Monday, Tuesday, and Saturday, and that long, strenuous exercise sessions are more common on weekends. 
 
 ### Key Question 2
 #### How could these trends apply to Bellabeat customers?
