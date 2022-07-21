@@ -405,9 +405,8 @@ weightLogInfo <- select(
 With our data cleaned, we can move on to the analysis phase of this study.
 
 ## Analysis and Visualizations
+For our analysis, we will focus on analyzing usage data to find trends in smart device usage, and apply that information to generate recommendations for future Bellabeat products and marketing initiatives in the final section.
 
-### Key Question 1
-#### What are some trends in smart device usage?
 **Trend 1: Low usage of manual reporting functions**  
 On a general level, we've already found some insights from our earlier data exploration, namely:
 
@@ -416,16 +415,16 @@ On a general level, we've already found some insights from our earlier data expl
 
 We can visualize this quickly with Tableau by plotting data points for each user ID over our time frame:
 
-**For sleepDay**  
+***sleepDay***  
 ![](./images/sleepDay_tracker_use.png)
 
-**For weightLogInfo**  
+***weightLogInfo***  
 ![](./images/weightLog_tracker_use.png)
+
 As we can see, only 3 users successfully tracked their sleep every day, and 0 users tracked their weight every day over our 29-day time frame. This suggests that users do not favor manual reporting.
 
 **Trend 2: Users exercise more at the start of a week and on weekends**  
 Currently, our activity_date column's data type is 'character'. We'll first change this to a date using lubridate:
-
 ```{r, eval=FALSE}
 dailyActivity$activity_date <- as_date(dailyActivity$activity_date, format = "%m/%d/%Y")
 ```
@@ -454,14 +453,42 @@ Here, we can see a higher median value and interquartile range (IQR) for Mondays
 
 We also observe the highest maximum whisker (Q3 + 1.5 * IQR) on Saturday, and the largest outlier on Sunday. 
 
-This suggests to us that, on average, the Fitbit users in this dataset exercised the most on Monday, Tuesday, and Saturday, and that long, strenuous exercise sessions are more common on weekends. 
+This suggests to us that, on average, the Fitbit users in this dataset exercised the most on Monday, Tuesday, and Saturday, and that long, strenuous exercise sessions are more likely to occur on weekends. 
 
-### Key Question 2
-#### How could these trends apply to Bellabeat customers?
+**Trend 3: Many users do not wear their trackers all day**  
+We first add a new column, total_time_worn, that sums up very active/moderately active/light active/sedentary minutes:
+```{r, eval=FALSE}
+dailyActivity <- dailyActivity %>% 
+  mutate(total_time_worn = very_active_minutes + fairly_active_minutes + lightly_active_minutes + sedentary_minutes)
+```
 
-
-### Key Question 3
-#### How could these trends help influence Bellabeat marketing strategy?
-Since our third key question calls for recommendations on action, we will address it in our final section below.
+We then create a violin/box plot to visualize:
+```{r, eval=FALSE}
+dailyActivity %>% 
+  group_by(weekday) %>% 
+  ggplot(aes(x = weekday, y = total_time_worn)) +
+  geom_violin() +
+  geom_boxplot(width = 0.1) +
+  labs(
+    title = "Tracker Use by Day of Week",
+    x = "Day of Week",
+    y = "Percentage of Day Worn",
+    caption = "Time frame: April 12, 2016 to May 11, 2016"
+  ) +
+  scale_y_continuous(
+    breaks = c(360, 720, 1080, 1440),
+    labels = c("25%", "50%", "75%", "100%")
+  )
+```
+![](./images/tracker_use_day_of_week.png)
+Here, we see that a significant number of users only wear their trackers between 50-75% of the day.
 
 ## Recommendations
+As a part of our recommendations, we aim to answer our key questions of how these insights apply to Bellabeat users, and how they can be used to improve Bellabeat's marketing strategy.
+
+#### Recommendation 1
+
+#### Recommendation 2
+
+#### Recommendation 3
+
