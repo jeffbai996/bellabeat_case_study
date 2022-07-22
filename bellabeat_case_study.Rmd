@@ -486,9 +486,21 @@ Here, we see that a significant number of users only wear their trackers between
 ## Recommendations
 As a part of our recommendations, we aim to answer our key questions of how these insights apply to Bellabeat users, and how they can be used to improve Bellabeat's marketing strategy.
 
-#### Recommendation 1
+#### **Recommendation 1: Focus on comfort and ease-of-use**  
+The value that users derive from fitness trackers and their myriad features is a function of how much they wear them. As we have seen in the analysis, a significant proportion of users do not wear their trackers for the whole day, which precludes the use of functions such as sleep tracking.
 
-#### Recommendation 2
+We recommend that Bellabeat focus on improving the Leaf fitness tracker for all-day wearability and comfort, with the goal of creating a fitness tracker that doubles as an essential accessory.
 
-#### Recommendation 3
+#### **Recommendation 2: Minimize manual reporting of metrics and fitness activities**  
+As we have seen from the data, users are generally inconsistent when using fitness tracker features which require manual activation or reporting of data. This is likely due to the fact that many users may not have the time or energy to browse through the app to use these features every day. 
 
+We recommend minimizing or, where possible, automating the activation of these features in order for users to get the greatest value out of their trackers and the health insights they provide.
+
+#### **Recommendation 3: Collect more data with a larger sample size for more accurate insights**  
+While this dataset contains a large amount of observations down to the second-scale, it still only represents a small sample of 33 Fitbit users, of which we know little about their ages, genders, and other important biometrics.
+
+This significantly limits the validity of conclusions drawn from the data, and also weakens its predictive power with respect to Bellabeat customers.
+
+We recommend Bellabeat collect data from their own products or to find a more representative dataset of fitness tracker use in order for the analytics team to generate more valid insights.
+
+<div class="tocify-extend-page" data-unique="tocify-extend-page" style="height: 0;"></div>
