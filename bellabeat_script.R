@@ -83,3 +83,28 @@ dailyActivity %>%
     breaks = c(360, 720, 1080, 1440),
     labels = c("25%", "50%", "75%", "100%")
   )
+
+# average time slept over day of week
+sleepDay$sleep_day <- as_date(sleepDay$sleep_day, format = "%m/%d/%Y")
+
+sleepDay <- sleepDay %>% 
+  mutate(weekday = wday(sleep_day, label = TRUE))
+
+sleepDay %>% 
+  group_by(weekday) %>% 
+  summarize(avg_minutes_asleep = mean(total_minutes_asleep)) %>% 
+  ggplot(aes(x = weekday, y = avg_minutes_asleep)) +
+  geom_col() +
+  coord_cartesian(
+    ylim = c(300, 500),
+  ) +
+  scale_y_continuous(
+    breaks = c(300, 360, 420, 480, 540),
+    labels = c("5h", "6h", "7h", "8h", "9h")
+  ) +
+  labs(
+    title = "Average Minutes Asleep by Day of Week",
+    x = "Day of Week",
+    y = "Average Minutes Asleep",
+    caption = "Time frame: April 12, 2016 to May 11, 2016"
+  )
